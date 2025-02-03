@@ -1,0 +1,6 @@
+bs4
+ollama
+requests
+pyyaml
+langchain-ollama
+langchain_core

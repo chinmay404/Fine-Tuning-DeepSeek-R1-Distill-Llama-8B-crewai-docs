@@ -1,0 +1,18 @@
+question_prompt: |
+    Generate {number_of_questions} diverse questions and answers that an LLM might encounter when users ask about the {document}. Ensure:
+    1. Questions should vary in complexity, covering topics such as basic syntax, debugging, architectural design, and system-level issues.
+    2. if  question is related to codebase or code things must include placeholders for [function_name] and [module_name] to reference code elements.
+    3. Mix both code generation and documentation-based questions (e.g., "How do I implement [function_name] in [module_name] to handle [specific_task]?" and "Explain how [function_name] works within [module_name]").  
+    4. All questions must explicitly reference the placeholders [function_name] and [module_name] at least once.
+    5. Do not provide any answers in the output; only the questions are needed.
+    6. Output your response strictly as a valid JSON object, where each key is formatted as "Question [n]" (with n being a sequential number starting from 1) and the corresponding value is the question text. Do not include any additional text outside of this JSON object.
+
+    Example JSON output:
+    {{
+    "Question 1": "How do I implement the [function_name] described in [module_name ] docs to handle [specific_task]?",
+    "Question 2": "What is the purpose of [function_name] in [module_name] when addressing [specific_task]?"
+    }}
+
+    Generate {number_of_questions} Questions.
+
+      
