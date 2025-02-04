@@ -15,4 +15,20 @@ question_prompt: |
 
     Generate {number_of_questions} Questions.
 
-      
+answer_prompt : |
+    Generate a JSON response strictly based on the given document.  
+
+    **Input:**  
+    - Document: {document}  
+    - Question: '{question}'  
+
+    **Response Format:**  
+    - Only use information from the document.  
+    - Replace placeholders like [function_name] or [module_name] with actual elements from the document.  
+    - For code-related questions, include a relevant example and explain its integration.  
+    - For conceptual questions, provide a clear explanation, architectural context, and common pitfalls.  
+    - Ensure a structured, accurate, and output  in <answer></answer> tags:  
+    Example response format:
+    <answer>  
+        Full Detailed Answer with code if needed.
+    </endanswer>
