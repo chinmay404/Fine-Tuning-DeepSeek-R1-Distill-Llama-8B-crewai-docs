@@ -1,77 +1,83 @@
-# Fine-Tuning DeepSeek-R1-Distill-Llama-8B Using LoRA (Low-Rank Adaptation) and Unsloth
+# LLM Fine-Tuning with LoRA on DeepSeek-R1 Model
 
-This repository contains code for fine-tuning **DeepSeek-R1-Distill-Llama-8B** using **LoRA** and integrating retrieval-augmented generation (RAG) for enhanced performance. It also includes synthetic data generation code.
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1TH_nP2vMqMSoSOL4UR9U_AUH7O-r9QNh?usp=sharing)]
+[![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Face-%23FFD21E?style=flat&logo=huggingface)](https://huggingface.co/chinmay1718/FineTuned-DeepSeek-R1-Distill-Llama-8-CrewAi-Docs-unsloth)
 
-![Project Banner](wandb_screenshot.png) <!-- Replace with actual image link -->
+This project provides an end-to-end pipeline for the Fine-Tuning-DeepSeek-R1-Distill-Llama-8B LLM on CrewAI Framework Docs using Low-Rank Adaptation (LoRA).
+The pipeline consists of:
 
-## 🚀 Features
+- **Document Scraping:** Retrieving and processing documentation to create a corpus of text data.
+- **Synthetic Question Generation:** Automatically generating questions from the scraped documents using prompt-based techniques.
+- **Synthetic Answer Generation:** Employing a retrieval-augmented generation (RAG) pipeline to produce answers from the generated questions.
+- **Fine-Tuning with LoRA:** Applying low-rank adaptation to fine-tune the language models effectively.
 
-- **Fine-tuning with LoRA**: Efficient adaptation of large models.
-- **Synthetic Data Generation**: Automated dataset creation from scrapping documentation.
-- **Logging & Monitoring**: Integrated with **Weights & Biases (W&B)** for tracking.
-- **Hugging Face Model**: Available on [Hugging Face Hub](#hugging-face-models).
+
+## Strategies & Implementation
+
+This project is structured around multiple key components to efficiently generate synthetic data and fine-tune LLMs. Below are the main strategies used in the implementation:
+
+### Document Scraping
+
+**Goal:** Extract useful textual content from structured online documentation to serve as the foundation for synthetic data generation.
+
+**Implementation Details:**
+- Uses **BeautifulSoup** to scrape and parse web pages.
+- Filters out unnecessary elements and extracts meaningful text from `<p>` and `<pre>` tags.
+- Saves each document as a `.txt` file inside the `scrapped_docs` directory.
+- Implements URL filtering to avoid irrelevant or duplicate pages.
+
+**Script:** `scrapper.py`  
 
 ---
 
-## 📂 Project Structure
+### Synthetic Question Generation
 
-📦 Fine_Tune_LLM_Using_LORA ├── 📜 Fine_Tune_LLM_Using_LORA.ipynb # Jupyter notebook for fine-tuning ├── 📜 answers_gen.py # Synthetic data generation & RAG pipeline ├── 📜 prompts.yaml # Prompt templates ├── 📜 questions.csv # Input questions for model ├── 📜 final_data.csv # Generated answers ├── 📜 requirements.txt # Dependencies └── 📜 README.md # Documentation
+**Goal:** Automatically generate high-quality questions from scraped documents using a prompt-based approach.
 
-yaml
-Copy
+**Implementation Details:**
+- Loads prompt templates from `prompts.yaml` (key: `question_prompt`).
+- Uses **LangChain** and **OllamaLLM** to generate questions.
+- Splits large documents into smaller batches (configured via `batch_size`).
+- Implements **checkpointing** to ensure previously processed batches are not re-generated.
+- Extracts generated questions from model responses using **regular expressions**.
+
+**Script:** `question_gen.py`  
 
 ---
 
-## 📌 Installation
+### Synthetic Answer Generation
 
-1. **Clone the repository**  
-   ```bash
-   git clone https://github.com/yourusername/Fine_Tune_LLM_LoRA.git
-   cd Fine_Tune_LLM_LoRA
-Create a virtual environment (optional but recommended)
+**Goal:** Generate contextually relevant answers for the synthetic questions using a **Retrieval-Augmented Generation (RAG)** approach.
 
-bash
-Copy
-python -m venv venv
-source venv/bin/activate  # For Linux/macOS
-venv\Scripts\activate     # For Windows
-Install dependencies
+**Implementation Details:**
+- Reads `questions.csv`, which contains generated questions.
+- Uses both **ChatGroq** and **ChatDeepSeek** to answer questions.
+- Retrieves relevant document context before generating responses.
+- Parses model outputs using **custom regex-based extraction**.
+- Saves generated answers into `final_data.csv`.
 
-bash
-Copy
-pip install -r requirements.txt
-🛠️ Usage
-1️⃣ Fine-Tuning the Model
-Run the Jupyter notebook:
+**Script:** `answergen.py`  
 
-bash
-Copy
-jupyter notebook Fine_Tune_LLM_Using_LORA.ipynb
-2️⃣ Generating Synthetic Data
-Execute:
+---
 
-bash
-Copy
-python answers_gen.py
-3️⃣ Monitoring with W&B
-Track model performance using Weights & Biases.
-Login:
-bash
-Copy
-wandb login
-Start tracking:
-python
-Copy
-import wandb
-wandb.init(project="fine-tune-lora")
-🤖 Hugging Face Models
-The fine-tuned models are available on Hugging Face:
+### Fine-Tuning with LoRA
 
-Model Name	Link
-LoRA Fine-Tuned Model	Hugging Face Model
-Synthetic Dataset	Dataset
-📸 Screenshots
-W&B Training Metrics	Model Predictions
-📜 License
-This project is licensed under the MIT License.
+**Goal:** Efficiently fine-tune large language models by adapting them to domain-specific knowledge.
 
+**Implementation Details:**
+- Uses **LoRA (Low-Rank Adaptation)** to fine-tune models without excessive computational overhead.
+- Incorporates **pre-trained LLMs** as the base model.
+- Optimizes key layers while keeping most of the model parameters frozen.
+- Ensures **efficient training with minimal GPU requirements**.
+
+---
+
+This section provides a high-level overview of how each component is implemented. Let me know if you want to add more details before moving to the next section!
+
+
+
+### 🔗WanDB
+![fine_tune_graph](https://github.com/user-attachments/assets/8cbc65a4-78e9-44b3-9272-3b4c2ef42eb2)
+
+### 🔗FineTuned Model Response 
+![Finetuned Results](https://github.com/user-attachments/assets/967754f0-bee3-45ac-9f27-2aa2990f359e)
